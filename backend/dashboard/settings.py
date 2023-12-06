@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 import os
 
@@ -41,6 +42,8 @@ INSTALLED_APPS = [
     'dashboard',
     'dashfeatures',
     'debug_toolbar',
+    'rest_framework_simplejwt',
+    'corsheaders',
     'core',
 ]
 
@@ -48,6 +51,7 @@ MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -141,3 +145,23 @@ INTERNAL_IPS = [
 ]
 
 AUTH_USER_MODEL = 'core.User'
+
+# rest framework setting
+REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
+}
+
+# Allowing Cross origin resource sharing (CORS) to responce
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+    "http://127.0.0.1:9000",
+]
