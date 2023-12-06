@@ -44,9 +44,6 @@ class Subject(models.Model):
 
 
 class Teacher(models.Model):
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
     phone_no = models.CharField(max_length=12)
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
