@@ -39,12 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'dashboard',
-    'dashfeatures',
     'debug_toolbar',
+    'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
     'core',
+    'dashboard',
+    'dashfeatures',
 ]
 
 MIDDLEWARE = [
@@ -151,8 +152,11 @@ REST_FRAMEWORK = {
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-
+    ),
+    'DEFAULT_RENDERER_CLASSES': [
+        'core.renderers.authRenderer',
+        'rest_framework.renderers.JSONRenderer',
+    ]
 }
 
 SIMPLE_JWT = {
@@ -160,7 +164,7 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
 }
 
-# Allowing Cross origin resource sharing (CORS) to responce
+# Allowing Cross origin resource sharing (CORS) to response
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:9000",
