@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from .models import User
-from .serializer import UserLoginSerializer, UserChangePasswordSerializer, UserRestPasswordSerializer
+from .serializer import UserLoginSerializer, UserChangePasswordSerializer, UserRestPasswordSerializer, VerifyOTPSerializer
 
 
 def get_token(user):
@@ -48,3 +48,11 @@ class UserResetPasswordView(APIView):
         serializer = UserRestPasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response({"msg": "OTP is send to you email.", "data": serializer.data}, status=status.HTTP_200_OK)
+
+
+class SendUserResetPasswordOTPView(APIView):
+
+    def post(self, request):
+        serializer = VerifyOTPSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response({"msg": 'Your account is verified. You can reset your password.'}, status=status.HTTP_200_OK)

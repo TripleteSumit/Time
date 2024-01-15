@@ -2,8 +2,10 @@ import random
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import check_password
-from .models import User
+from .models import User, ForgotPasswordOTP
 from .email import EmailUtil
+from datetime import timedelta
+from django.utils import timezone
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -52,8 +54,39 @@ class UserRestPasswordSerializer(serializers.Serializer):
         if not User.objects.filter(email=email).exists():
             raise serializers.ValidationError(
                 {"email": "Provided email doesn't exist"})
+        user = User.objects.get(email=email)
+
         # send mail data
         otp = random.randint(1000, 9999)
+        if ForgotPasswordOTP.objects.filter(user=user.id).exists():
+            forgot = ForgotPasswordOTP.objects.get(user_id=user.id)
+            forgot.otp = otp
+            forgot.created_at = timezone.now()
+        else:
+            forgot = ForgotPasswordOTP.objects.create(otp=otp, user_id=user.id)
+        forgot.save()
         data = {"otp": otp, "mail": email}
         EmailUtil.send_mail(data)
         return attr
+
+
+class VerifyOTPSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    otp = serializers.IntegerField()
+
+    def is_otp_expired(self, otp):
+        expired_time = otp.created_at + timedelta(minutes=5)
+        return timezone.now() > expired_time
+
+    def validate(self, attrs):
+        otp = attrs.get('otp')
+        email = attrs.get('email')
+        if not User.objects.filter(email=email).exists():
+            return serializers.ValidationError({"email": "Email doesn't exist"})
+
+        user_id = User.objects.get(email=email).id
+        stored_otp = ForgotPasswordOTP.objects.get(user=user_id)
+        if (otp != stored_otp.otp or self.is_otp_expired(stored_otp)):
+            raise serializers.ValidationError(
+                {"otp": "Entered OTP is either wrong or expired"})
+        return attrs
