@@ -1,7 +1,9 @@
+import random
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import check_password
 from .models import User
+from .email import EmailUtil
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -39,3 +41,19 @@ class UserChangePasswordSerializer(serializers.Serializer):
         user.set_password(pass1)
         user.save()
         return attrs
+
+
+class UserRestPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate(self, attr):
+        email = attr.get('email')
+
+        if not User.objects.filter(email=email).exists():
+            raise serializers.ValidationError(
+                {"email": "Provided email doesn't exist"})
+        # send mail data
+        otp = random.randint(1000, 9999)
+        data = {"otp": otp, "mail": email}
+        EmailUtil.send_mail(data)
+        return attr

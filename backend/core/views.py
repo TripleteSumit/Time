@@ -4,10 +4,9 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
 from .models import User
 from .serializer import UserLoginSerializer, UserChangePasswordSerializer, UserRestPasswordSerializer
-from pprint import pprint
-from rest_framework.permissions import IsAuthenticated
 
 
 def get_token(user):
@@ -41,3 +40,11 @@ class UserChangePasswordView(APIView):
             data=request.data, context={'user': request.user})
         serializer.is_valid(raise_exception=True)
         return Response({"msg": "Password Chaged Successfully."}, status=status.HTTP_200_OK)
+
+
+class UserResetPasswordView(APIView):
+
+    def post(self, request):
+        serializer = UserRestPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response({"msg": "OTP is send to you email.", "data": serializer.data}, status=status.HTTP_200_OK)
