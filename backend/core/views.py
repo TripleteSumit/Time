@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from .models import User
-from .serializer import UserLoginSerializer, UserChangePasswordSerializer, UserRestPasswordSerializer, VerifyOTPSerializer
+from .serializer import UserLoginSerializer, UserChangePasswordSerializer, UserRestPasswordSerializer, VerifyOTPSerializer, ForgotPasswordSerializer
 
 
 def get_token(user):
@@ -55,4 +55,28 @@ class SendUserResetPasswordOTPView(APIView):
     def post(self, request):
         serializer = VerifyOTPSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        return Response({"msg": 'Your account is verified. You can reset your password.'}, status=status.HTTP_200_OK)
+        return Response({"msg": 'Your account is verified. You can reset your password.', "email": serializer.data.get('email')}, status=status.HTTP_200_OK)
+
+
+class ForgotPasswordView(APIView):
+    def get(self, request):
+
+        email = request.GET.get('email', None)
+
+        if email is None:
+            return Response({"msg": "Email doesn't provide in query params."})
+        return Response({'email': email})
+
+    def post(self, request):
+        email = request.GET.get('email', None)
+
+        if email is None:
+            return Response({"email": "Email doesn't provide in query params."})
+
+        if not User.objects.filter(email=email).exists():
+            return Response({"email": "Email doesn't exist."})
+
+        serializer = ForgotPasswordSerializer(
+            data=request.data, context={'email': email})
+        serializer.is_valid(raise_exception=True)
+        return Response({"msg": "Password is succesfully changed. You can login into you account using new password"})

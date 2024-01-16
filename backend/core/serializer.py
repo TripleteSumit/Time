@@ -90,3 +90,27 @@ class VerifyOTPSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 {"otp": "Entered OTP is either wrong or expired"})
         return attrs
+
+
+class ForgotPasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField(
+        max_length=255, style={'input_type': 'password'}, write_only=True)
+    confirm_password = serializers.CharField(
+        max_length=255, style={'input_type': 'password'}, write_only=True)
+
+    def validate(self, attrs):
+        pass1 = attrs.get('new_password')
+        pass2 = attrs.get('confirm_password')
+        email = self.context.get('email')
+        if (pass1 != pass2):
+            raise serializers.ValidationError(
+                {"equality_error": "new password is not same as confirm password"})
+        user = User.objects.get(email=email)
+        print(user.id)
+        old_password = user.password
+        if check_password(pass1, old_password):
+            raise serializers.ValidationError(
+                {"new_password": "New password can not be same as old password."})
+        user.set_password(pass1)
+        user.save()
+        return attrs
