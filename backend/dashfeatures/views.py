@@ -5,13 +5,15 @@ from rest_framework.response import Response
 from .models import Teacher
 from .serializer import TeacherProfileSerializer
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user_profile_data = Teacher.objects.get(user_id=request.user.id)
+        user_profile_data = get_object_or_404(
+            Teacher, user_id=request.user.id)
         serializer = TeacherProfileSerializer(
             user_profile_data, context={"user": request.user})
         return Response(serializer.data, status=status.HTTP_200_OK)
