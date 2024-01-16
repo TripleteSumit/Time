@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 
 
 class UserProfileView(APIView):
+    serializer_class = TeacherProfileSerializer
     permission_classes = [IsAuthenticated]
 
     def get(self, request):

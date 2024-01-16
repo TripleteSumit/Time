@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'drf_spectacular',
     'core',
     'dashboard',
     'dashfeatures',
@@ -156,7 +157,16 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'core.renderers.authRenderer',
         'rest_framework.renderers.JSONRenderer',
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+}
+
+# API documentation settings
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Time Kit API',
+    'DESCRIPTION': 'Time kit a smart attendance application. Using time kit we can take attendancy by QR code.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False
 }
 
 SIMPLE_JWT = {

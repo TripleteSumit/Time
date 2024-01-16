@@ -19,6 +19,8 @@ def get_token(user):
 
 
 class UserLoginView(APIView):
+    serializer_class = UserLoginSerializer
+
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -33,6 +35,7 @@ class UserLoginView(APIView):
 
 
 class UserChangePasswordView(APIView):
+    serializer_class = UserChangePasswordSerializer
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -43,6 +46,7 @@ class UserChangePasswordView(APIView):
 
 
 class UserResetPasswordView(APIView):
+    serializer_class = UserRestPasswordSerializer
 
     def post(self, request):
         serializer = UserRestPasswordSerializer(data=request.data)
@@ -51,6 +55,7 @@ class UserResetPasswordView(APIView):
 
 
 class SendUserResetPasswordOTPView(APIView):
+    serializer_class = VerifyOTPSerializer
 
     def post(self, request):
         serializer = VerifyOTPSerializer(data=request.data)
@@ -59,6 +64,8 @@ class SendUserResetPasswordOTPView(APIView):
 
 
 class ForgotPasswordView(APIView):
+    serializer_class = ForgotPasswordSerializer
+
     def get(self, request):
 
         email = request.GET.get('email', None)

@@ -106,7 +106,6 @@ class ForgotPasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 {"equality_error": "new password is not same as confirm password"})
         user = User.objects.get(email=email)
-        print(user.id)
         old_password = user.password
         if check_password(pass1, old_password):
             raise serializers.ValidationError(
