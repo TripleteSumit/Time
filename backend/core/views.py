@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from .models import User
-from .serializer import UserLoginSerializer, UserChangePasswordSerializer, UserRestPasswordSerializer, VerifyOTPSerializer, ForgotPasswordSerializer
+from .serializer import UserLoginSerializer, UserChangePasswordSerializer, UserRestPasswordSerializer, VerifyOTPSerializer, ForgotPasswordSerializer, LogoutSerializer
 
 
 def get_token(user):
@@ -87,3 +87,15 @@ class ForgotPasswordView(APIView):
             data=request.data, context={'email': email})
         serializer.is_valid(raise_exception=True)
         return Response({"msg": "Password is succesfully changed. You can login into you account using new password"})
+
+
+class LogoutView(APIView):
+    serializer_class = LogoutSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({'message': "Thank you for visiting."}, status=status.HTTP_204_NO_CONTENT)

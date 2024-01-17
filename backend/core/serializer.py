@@ -1,11 +1,13 @@
 import random
+from datetime import timedelta
 from rest_framework import serializers
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import check_password
+from django.utils import timezone
 from .models import User, ForgotPasswordOTP
 from .email import EmailUtil
-from datetime import timedelta
-from django.utils import timezone
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -113,3 +115,22 @@ class ForgotPasswordSerializer(serializers.Serializer):
         user.set_password(pass1)
         user.save()
         return attrs
+
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+    def validate(self, attrs):
+        self.token = attrs['refresh']
+
+        if not self.token:
+            return serializers.ValidationError({"detail": "Refresh Token is required."}, status=status.HTTP_400_BAD_REQUEST)
+        return attrs
+
+    def save(self, **kwargs):
+        try:
+            token = RefreshToken(self.token)
+            token.blacklist()
+        except TokenError as e:
+            return serializers.ValidationError({"bad_token": "Token is expired or invalid"})
+        return kwargs
