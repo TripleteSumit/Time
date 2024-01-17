@@ -6,6 +6,9 @@ from django.conf import settings
 class Semestar(models.Model):
     name = models.CharField(max_length=255)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Department(models.Model):
     COMPUTER_SCIENCE = 'CSE'
@@ -21,6 +24,9 @@ class Department(models.Model):
         (AGRICULTURE, 'AGRICULTURE ENGINEERING')
     ]
     name = models.CharField(max_length=255, choices=DEPARTMENT_CHOICES)
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Section(models.Model):
@@ -42,6 +48,12 @@ class Subject(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     semestar = models.ForeignKey(Semestar, on_delete=models.CASCADE)
 
+    def __str__(self) -> str:
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
 
 class Teacher(models.Model):
     phone_no = models.CharField(max_length=12)
@@ -49,6 +61,9 @@ class Teacher(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     subject = models.ManyToManyField(Subject)
+
+    def __str__(self) -> str:
+        return f'{self.user.first_name} {self.user.last_name}'
 
 
 class Attendance(models.Model):

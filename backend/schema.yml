@@ -1,0 +1,276 @@
+openapi: 3.0.3
+info:
+  title: Time Kit API
+  version: 1.0.0
+  description: Time kit a smart attendance application. Using time kit we can take
+    attendancy by QR code.
+paths:
+  /auth/login/:
+    post:
+      operationId: auth_login_create
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLogin'
+          description: ''
+  /change-password/:
+    post:
+      operationId: change_password_create
+      tags:
+      - change-password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserChangePassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserChangePassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserChangePassword'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserChangePassword'
+          description: ''
+  /profile/me/:
+    get:
+      operationId: profile_me_retrieve
+      tags:
+      - profile
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherProfile'
+          description: ''
+  /reset-password/:
+    post:
+      operationId: reset_password_create
+      tags:
+      - reset-password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRestPassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRestPassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRestPassword'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRestPassword'
+          description: ''
+  /reset-password/set/:
+    get:
+      operationId: reset_password_set_retrieve
+      tags:
+      - reset-password
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForgotPassword'
+          description: ''
+    post:
+      operationId: reset_password_set_create
+      tags:
+      - reset-password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ForgotPassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ForgotPassword'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForgotPassword'
+          description: ''
+  /reset-password/verify-otp/:
+    post:
+      operationId: reset_password_verify_otp_create
+      tags:
+      - reset-password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOTP'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyOTP'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyOTP'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyOTP'
+          description: ''
+components:
+  schemas:
+    ForgotPassword:
+      type: object
+      properties:
+        new_password:
+          type: string
+          writeOnly: true
+          maxLength: 255
+        confirm_password:
+          type: string
+          writeOnly: true
+          maxLength: 255
+      required:
+      - confirm_password
+      - new_password
+    TeacherProfile:
+      type: object
+      properties:
+        name:
+          type: string
+          readOnly: true
+        email:
+          type: string
+          readOnly: true
+        phone_no:
+          type: string
+          maxLength: 12
+        department:
+          type: string
+          readOnly: true
+        subject:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserProileSubject'
+      required:
+      - department
+      - email
+      - name
+      - phone_no
+      - subject
+    UserChangePassword:
+      type: object
+      properties:
+        oldpassword:
+          type: string
+          writeOnly: true
+          maxLength: 255
+        newpassword:
+          type: string
+          writeOnly: true
+          maxLength: 255
+        confirmpassword:
+          type: string
+          writeOnly: true
+          maxLength: 255
+      required:
+      - confirmpassword
+      - newpassword
+      - oldpassword
+    UserLogin:
+      type: object
+      properties:
+        username:
+          type: string
+          maxLength: 255
+        password:
+          type: string
+      required:
+      - password
+      - username
+    UserProileSubject:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+      required:
+      - id
+      - name
+    UserRestPassword:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+    VerifyOTP:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        otp:
+          type: integer
+      required:
+      - email
+      - otp
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
