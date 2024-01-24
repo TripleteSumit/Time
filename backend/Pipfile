@@ -13,6 +13,7 @@ django-cors-headers = "*"
 [dev-packages]
 django-debug-toolbar = "*"
 drf-spectacular = "*"
+python-decouple = "*"
 
 [requires]
 python_version = "3.10"
