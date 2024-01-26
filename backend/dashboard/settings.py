@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'core',
     'dashboard',
     'dashfeatures',
+    'qr_system',
 ]
 
 MIDDLEWARE = [
@@ -92,7 +93,7 @@ DATABASES = {
         'NAME': 'timekit',
         'HOST': 'localhost',
         'USER': 'root',
-        'PASSWORD': '90900'
+        'PASSWORD': 'Roshan@123'
     }
 }
 

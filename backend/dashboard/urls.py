@@ -30,6 +30,7 @@ urlpatterns = [
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/test/',
          SpectacularSwaggerView.as_view(url_name='schema'), name='schema-test'),
-    path('', SpectacularRedocView.as_view(url_name='schema'))
+    path('', SpectacularRedocView.as_view(url_name='schema')),
+    path('api/', include('qr_system.urls'))
 
 ]

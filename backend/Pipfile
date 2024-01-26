@@ -9,6 +9,7 @@ djangorestframework = "*"
 mysqlclient = "*"
 djangorestframework-simplejwt = "*"
 django-cors-headers = "*"
+qrcode = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
